@@ -1,0 +1,78 @@
+---
+name: code-reviewer
+purpose: Review code changes and provide constructive feedback on quality, style, and potential issues
+rootUrl: https://raw.githubusercontent.com/LSTM-Kirigaya/jinhui-skills/main/skills/code-reviewer/SKILL.md
+tags: ["code-review", "development", "quality"]
+model: claude-3-5-sonnet
+---
+
+# Code Reviewer Skill
+
+This skill helps review code changes and provide detailed feedback.
+
+## Usage Examples
+
+### Review a pull request
+
+Please review this pull request for code quality and potential issues:
+
+```diff
++ function calculateTotal(items) {
++   let total = 0;
++   for (let i = 0; i < items.length; i++) {
++     total += items[i].price;
++   }
++   return total;
++ }
+```
+
+### Check for security issues
+
+Review this code for potential security vulnerabilities:
+
+```javascript
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const query = `SELECT * FROM users WHERE username = '${username}'`;
+  db.query(query, (err, results) => {
+    // ...
+  });
+});
+```
+
+## AI Execution Output Format
+
+When reviewing code, provide output in this structured format:
+
+1. **Summary** - Brief overview of the code changes
+2. **Quality Assessment** - Code quality rating (1-5 stars)
+3. **Issues Found** - List of specific issues with:
+   - Severity (Critical/High/Medium/Low)
+   - Location (line numbers)
+   - Description
+   - Suggested fix
+4. **Positive Aspects** - What was done well
+5. **Recommendations** - Actionable improvement suggestions
+
+## Required Fields
+
+Based on the skill format, the following fields are required when uploading:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| name | string | Unique skill identifier (e.g., "code-reviewer") |
+| purpose | string | What this skill does |
+| rootUrl | string | GitHub raw URL to the SKILL.md file |
+| tags | array | Categories for the skill |
+| usageExamples | array | Example prompts with AI responses |
+| model | string | Recommended AI model (optional) |
+
+## Usage Example Structure
+
+Each usage example should include:
+- `prompt`: The user's input/query
+- `aiResponses`: Array of AI response items with:
+  - `type`: "thinking", "toolcall", or "message"
+  - `content`: The response content
+  - `toolName`: For toolcall type, the tool name
+  - `toolInput`: For toolcall type, the input parameters
