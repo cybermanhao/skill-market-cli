@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const { clearToken, isLoggedIn } = require('../auth/token-store');
+const { clearToken, clearPersonalAccessToken, isLoggedIn } = require('../auth/token-store');
 const apiClient = require('../api/client');
 
 async function logout() {
@@ -16,6 +16,7 @@ async function logout() {
   }
 
   clearToken();
+  clearPersonalAccessToken();
 
   console.log(chalk.green('已登出本地凭证'));
   console.log('');

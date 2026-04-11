@@ -9,6 +9,7 @@ const upload = require('./commands/upload');
 const update = require('./commands/update');
 const remove = require('./commands/delete');
 const runExample = require('./commands/run-example');
+const token = require('./commands/token');
 const { getConfig } = require('./auth/token-store');
 const { applyServerMode, getServerModesHelp } = require('./config/server-modes');
 const apiClient = require('./api/client');
@@ -66,6 +67,12 @@ program
   .command('logout')
   .description('清除本地登录状态并尝试撤销服务端令牌')
   .action(logout);
+
+// Token command
+program
+  .command('token [subcommand] [value]')
+  .description('管理 Personal Access Token（用于 CLI 免登录）')
+  .action(token);
 
 // List command
 program

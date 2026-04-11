@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const { isLoggedIn } = require('../auth/token-store');
+const { isLoggedIn, getPersonalAccessToken } = require('../auth/token-store');
 const apiClient = require('../api/client');
 const { runExampleAndCollect } = require('../lib/run-example-collect');
 const {
@@ -15,8 +15,10 @@ const {
  * 交互补全：名称、描述、标签、模型、rootUrl、用户案例 + 可选运行采集轨迹
  */
 async function upload(skillPath, options = {}) {
-  if (!isLoggedIn()) {
-    console.error(chalk.red('请先登录：skill-market-cli login\n'));
+  if (!isLoggedIn() && !getPersonalAccessToken()) {
+    console.error(chalk.red('请先登录或设置 Access Token：'));
+    console.error(chalk.gray('  skill-market-cli login'));
+    console.error(chalk.gray('  skill-market-cli token set <your-access-token>\n'));
     process.exit(1);
   }
 

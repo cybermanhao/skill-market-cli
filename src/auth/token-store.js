@@ -60,9 +60,28 @@ function clearToken() {
   saveConfig(config);
 }
 
-// 检查是否已登录
+// Personal Access Token (PAT) 管理
+function savePersonalAccessToken(token) {
+  const config = getConfig();
+  config.personalAccessToken = token;
+  saveConfig(config);
+}
+
+function getPersonalAccessToken() {
+  const config = getConfig();
+  return config.personalAccessToken || null;
+}
+
+function clearPersonalAccessToken() {
+  const config = getConfig();
+  delete config.personalAccessToken;
+  saveConfig(config);
+}
+
+// 检查是否已登录（OAuth 或 Personal Access Token）
 function isLoggedIn() {
   const config = getConfig();
+  if (config.personalAccessToken) return true;
   if (!config.accessToken) return false;
   if (config.expiresAt && Date.now() > config.expiresAt) {
     return false;
@@ -95,6 +114,9 @@ module.exports = {
   isLoggedIn,
   getServerConfig,
   setServerConfig,
+  savePersonalAccessToken,
+  getPersonalAccessToken,
+  clearPersonalAccessToken,
   CONFIG_DIR,
   CONFIG_FILE
 };

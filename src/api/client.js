@@ -1,6 +1,6 @@
 const axios = require('axios');
 const chalk = require('chalk');
-const { getToken, isLoggedIn, getServerConfig } = require('../auth/token-store');
+const { getToken, isLoggedIn, getServerConfig, getPersonalAccessToken } = require('../auth/token-store');
 const { refreshAccessToken } = require('../auth/oauth');
 
 class ApiClient {
@@ -23,12 +23,12 @@ class ApiClient {
       }
     });
 
-    // 请求拦截器 - 添加 Token
+    // 请求拦截器 - 添加 Token（优先 OAuth Token，其次 Personal Access Token）
     this.client.interceptors.request.use(
       async (config) => {
         if (isLoggedIn()) {
           const { accessToken, expiresAt } = getToken();
-          
+
           // 检查 Token 是否即将过期
           if (expiresAt && Date.now() > expiresAt - 60000) {
             // Token 即将过期，尝试刷新
@@ -41,6 +41,11 @@ class ApiClient {
             }
           } else {
             config.headers['Authorization'] = `Bearer ${accessToken}`;
+          }
+        } else {
+          const pat = getPersonalAccessToken();
+          if (pat) {
+            config.headers['Authorization'] = `Bearer ${pat}`;
           }
         }
         return config;
@@ -89,9 +94,9 @@ class ApiClient {
     const response = await this.client.get('/skill/list', {
       params: { page: 1, pageSize: 1000 }
     });
-    
+
     const { user } = getToken();
-    if (response.data && response.data.data && response.data.data.list) {
+    if (user && response.data && response.data.data && response.data.data.list) {
       response.data.data.list = response.data.data.list.filter(
         skill => skill.creator === user.name
       );
