@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const { clearToken, clearPersonalAccessToken, isLoggedIn } = require('../auth/token-store');
+const { clearToken, clearPersonalAccessToken, isLoggedIn, getConfig, saveConfig } = require('../auth/token-store');
 const apiClient = require('../api/client');
 
 async function logout() {
@@ -17,6 +17,14 @@ async function logout() {
 
   clearToken();
   clearPersonalAccessToken();
+
+  // 清除由 login 写入的 server / mode，避免后续命令错误指向 localhost
+  const config = getConfig();
+  if (config.server || config.mode) {
+    delete config.server;
+    delete config.mode;
+    saveConfig(config);
+  }
 
   console.log(chalk.green('已登出本地凭证'));
   console.log('');
