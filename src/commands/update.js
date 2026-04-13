@@ -3,14 +3,12 @@ const path = require('path');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const YAML = require('yaml');
-const { isLoggedIn, getPersonalAccessToken } = require('../auth/token-store');
+const { isLoggedIn, getPersonalAccessToken, printLoginHelp } = require('../auth/token-store');
 const apiClient = require('../api/client');
 
 async function update(skillId, options) {
   if (!isLoggedIn() && !getPersonalAccessToken()) {
-    console.error(chalk.red('❌ Please login first or set an access token:'));
-    console.error(chalk.gray('  skill-market-cli login'));
-    console.error(chalk.gray('  skill-market-cli token set <your-access-token>\n'));
+    printLoginHelp();
     process.exit(1);
   }
 

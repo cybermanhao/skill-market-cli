@@ -105,6 +105,14 @@ function setServerConfig(serverConfig) {
   saveConfig(config);
 }
 
+// 统一的登录帮助提示
+function printLoginHelp() {
+  const chalk = require('chalk');
+  console.error(chalk.red('请先登录或设置 Access Token：'));
+  console.error(chalk.gray('  方法 1：在命令行运行 skill-market-cli login'));
+  console.error(chalk.gray('  方法 2：打开 https://kirigaya.cn/profile/tokens 创建 token，然后运行 skill-market-cli token set <your-token>\n'));
+}
+
 module.exports = {
   getConfig,
   saveConfig,
@@ -117,6 +125,7 @@ module.exports = {
   savePersonalAccessToken,
   getPersonalAccessToken,
   clearPersonalAccessToken,
+  printLoginHelp,
   CONFIG_DIR,
   CONFIG_FILE
 };

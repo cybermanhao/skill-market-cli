@@ -1,6 +1,6 @@
 const axios = require('axios');
 const chalk = require('chalk');
-const { getToken, isLoggedIn, getServerConfig, getPersonalAccessToken } = require('../auth/token-store');
+const { getToken, isLoggedIn, getServerConfig, getPersonalAccessToken, printLoginHelp } = require('../auth/token-store');
 const { refreshAccessToken } = require('../auth/oauth');
 
 class ApiClient {
@@ -62,8 +62,8 @@ class ApiClient {
         if (error.response) {
           // 401 未授权 - Token 可能已过期
           if (error.response.status === 401) {
-            console.error(chalk.red('\n❌ Authentication expired. Please login again.'));
-            console.error(chalk.gray('Run: skill-market-cli login\n'));
+            console.error(chalk.red('\n❌ 认证已过期或无效，请重新登录。'));
+            printLoginHelp();
           }
           
           // 403 禁止访问

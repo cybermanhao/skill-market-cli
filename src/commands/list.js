@@ -1,10 +1,10 @@
 const chalk = require('chalk');
-const { isLoggedIn, getToken } = require('../auth/token-store');
+const { isLoggedIn, getPersonalAccessToken, getToken, printLoginHelp } = require('../auth/token-store');
 const apiClient = require('../api/client');
 
 async function list(options) {
-  if (!isLoggedIn()) {
-    console.error(chalk.red('❌ Please login first: skill-market-cli login\n'));
+  if (!isLoggedIn() && !getPersonalAccessToken()) {
+    printLoginHelp();
     process.exit(1);
   }
 

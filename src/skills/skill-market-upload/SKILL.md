@@ -15,7 +15,10 @@ rootUrl: https://raw.githubusercontent.com/LSTM-Kirigaya/skill-market-cli/refs/h
 
 ## 你必须知道的约束
 
-1. **登录**：用户须先执行 `skill-market-cli login`（可用 `--mode development` 指向本地）。凭证在 `~/.skill-market-cli/config.json`。
+1. **检查登录状态**：在上传之前，必须先确认用户已登录 `skill-market-cli`。凭证保存在 `~/.skill-market-cli/config.json`。
+   - 如果用户尚未登录，必须告知用户以下两种登录方式，并等待用户完成登录后再继续上传：
+     - **方法 1**：在命令行运行 `skill-market-cli login`
+     - **方法 2**：打开 https://kirigaya.cn/profile/tokens ，自己创建 Personal Access Token，然后运行 `skill-market-cli token set <your-token>`
 2. **上传走 AI 渠道**：CLI 使用 `POST /api/skill/ai/upload`，要求 **全部字段非空**，且 **`tags`、`usageExamples` 不得为空数组**。
 3. **用户案例（必填）**：`usageExamples` 中每一项必须包含：
    - **`prompt`**：终端用户会如何向该 Skill 提问（由用户或你根据上下文代写，但必须经用户确认）。
@@ -25,15 +28,18 @@ rootUrl: https://raw.githubusercontent.com/LSTM-Kirigaya/skill-market-cli/refs/h
 
 ## 推荐工作流（Agent）
 
-1. 确认仓库中存在 **`SKILL.md`**（目录则路径指向该目录）。
-2. 读取 frontmatter，整理候选：`name`、`purpose`/`description`、`tags`、`model`、`rootUrl`。
-3. 与用户确认 **至少一条「用户会如何提问」的测试案例**（可多轮补充）。案例文本即 `prompt`。
-4. 在终端执行上传（勿省略路径）：
+1. **确认登录状态**：
+   - 读取 `~/.skill-market-cli/config.json` 或通过 `skill-market-cli token get` 检查是否存在有效凭证。
+   - 若未登录，向用户说明两种登录方式（`skill-market-cli login` 或前往 https://kirigaya.cn/profile/tokens 创建 token），并在用户完成登录后继续。
+2. 确认仓库中存在 **`SKILL.md`**（目录则路径指向该目录）。
+3. 读取 frontmatter，整理候选：`name`、`purpose`/`description`、`tags`、`model`、`rootUrl`。
+4. 与用户确认 **至少一条「用户会如何提问」的测试案例**（可多轮补充）。案例文本即 `prompt`。
+5. 在终端执行上传（勿省略路径）：
    ```bash
    skill-market-cli upload <path-to-skill-dir-or-SKILL.md>
    ```
-5. 按 CLI 提示补全缺失字段；当提示采集轨迹时，**允许命令自动运行**（会调用内置采集器写入 `aiResponses`）。
-6. 上传成功后，CLI 会在技能目录写入 **`.skill-examples.json`**，便于复查与再次上传。
+6. 按 CLI 提示补全缺失字段；当提示采集轨迹时，**允许命令自动运行**（会调用内置采集器写入 `aiResponses`）。
+7. 上传成功后，CLI 会在技能目录写入 **`.skill-examples.json`**，便于复查与再次上传。
 
 ## 与 `run-example` 的关系
 
@@ -44,6 +50,7 @@ rootUrl: https://raw.githubusercontent.com/LSTM-Kirigaya/skill-market-cli/refs/h
 
 - 不要编造不存在的 Git 仓库 URL；`rootUrl` 可用 `file:///...` 指向本地 `SKILL.md` 的绝对路径（CLI 默认值），或用户提供的 raw URL。
 - 不要跳过「用户案例」；没有案例与轨迹，AI 渠道上传会失败。
+- 不要在用户未登录时强行执行上传命令；必须先检查权限并引导登录。
 
 ## Usage Examples
 
@@ -51,4 +58,4 @@ rootUrl: https://raw.githubusercontent.com/LSTM-Kirigaya/skill-market-cli/refs/h
 
 **User:** 请根据我仓库里的 SKILL.md 帮我执行上传，并告诉我你要确认哪些字段。
 
-**AI:** 我会先读取 `SKILL.md` 的 frontmatter，列出缺失的 name、描述、标签、模型与 rootUrl；请你至少提供一条「最终用户会对该 Skill 说的话」作为测试案例。然后我在终端运行 `skill-market-cli upload .`，在交互中替你填入并确认，自动完成轨迹采集后提交。
+**AI:** 我会先检查你的 `skill-market-cli` 登录状态。如果已登录，则读取 `SKILL.md` 的 frontmatter，列出缺失的 name、描述、标签、模型与 rootUrl；请你至少提供一条「最终用户会对该 Skill 说的话」作为测试案例。然后我在终端运行 `skill-market-cli upload .`，在交互中替你填入并确认，自动完成轨迹采集后提交。

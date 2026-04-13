@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const { isLoggedIn, getPersonalAccessToken } = require('../auth/token-store');
+const { isLoggedIn, getPersonalAccessToken, printLoginHelp } = require('../auth/token-store');
 const apiClient = require('../api/client');
 const { runExampleAndCollect } = require('../lib/run-example-collect');
 const {
@@ -16,9 +16,7 @@ const {
  */
 async function upload(skillPath, options = {}) {
   if (!isLoggedIn() && !getPersonalAccessToken()) {
-    console.error(chalk.red('请先登录或设置 Access Token：'));
-    console.error(chalk.gray('  skill-market-cli login'));
-    console.error(chalk.gray('  skill-market-cli token set <your-access-token>\n'));
+    printLoginHelp();
     process.exit(1);
   }
 
